@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "universal"
+version = "0.1.0"
+description = ""
+authors = ["VK"]
+license = "0.1.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.6"
+django-environ = "^0.11.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

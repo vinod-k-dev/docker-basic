@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+    app:
+        restart: unless-stopped
+        image: universal-app
+        ports:
+            - "8001:8001"
+        expose:
+            - 8001
+        build:
+            dockerfile: Dockerfile
+            context: .
+
+        volumes:
+            - ./universal:/home/user/service/universal
+            - ./universal/static:/home/user/service/universal/static
+        command: /home/user/service/scripts/server-start.sh
+
+        depends_on:
+            # - redis
+            - db
+
+        stdin_open: true
+        tty: true
+
+    # redis:
+    #     restart: unless-stopped
+    #     image: redis:7.0-alpine
+    #     expose:
+    #         - 6379
+    #     ports:
+    #         - "6379:6379"
+
+    db:
+        image: postgres:15
+        restart: unless-stopped
+        expose:
+            - 5430
+        ports:
+            - "5430:5430"
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        command:
+            - -c
+            - max_connections=200
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - postgres_data:/var/lib/postgresql@15/data/
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+
+
+volumes:
+    static_volume: {}
+    postgres_data: {}
